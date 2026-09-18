@@ -5,6 +5,7 @@ const PATHS = {
   bus: <><rect x="4" y="5" width="16" height="14" rx="3" /><path d="M7 19v2m10-2v2M7 9h10M7 14h.01M17 14h.01" /></>,
   train: <><rect x="5" y="3" width="14" height="16" rx="4" /><path d="M8 19l-2 2m10-2 2 2M8 8h8M8 13h.01M16 13h.01" /></>,
   air: <><path d="m3 12 18-6-6 18-3-8-9-4Z" /><path d="m12 16 3-3" /></>,
+  home: <><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9Z" /><path d="M9 21v-6h6v6" /></>,
   plan: <><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4M11 8v6m-3-3h6" /></>,
   route: <><circle cx="6" cy="18" r="2" /><circle cx="18" cy="6" r="2" /><path d="M8 18h3a3 3 0 0 0 3-3v-3a3 3 0 0 1 3-3h1" /></>,
   live: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2" /><path d="M12 2v2m10 8h-2M12 20v2M4 12H2" /></>,

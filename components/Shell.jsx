@@ -9,7 +9,7 @@ import { useLiveClock } from '../lib/useLiveClock';
 import { haptic } from '../lib/feedback';
 
 const TABS = [
-  { href: '/', label: 'Plan', icon: 'plan' },
+  { href: '/', label: 'Home', icon: 'home' },
   { href: '/journey', label: 'Route', icon: 'route' },
   { href: '/track', label: 'Live', icon: 'live' },
   { href: '/settings', label: 'Accessibility', icon: 'comfort' }

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useApp } from '../components/Providers';
 import { PLACES, MODES, ROUTES } from '../lib/data';
+import { NETWORK_STATUS } from '../lib/network';
 import TransitIcon from '../components/TransitIcon';
 import Skeleton from '../components/Skeleton';
 import { haptic } from '../lib/feedback';
@@ -18,6 +19,10 @@ export default function Home() {
   const [swapping, setSwapping] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [destinationFocused, setDestinationFocused] = useState(false);
+
+  const normalLines = NETWORK_STATUS.filter((item) => item.status === 'ok').length;
+  const usualRouteReady = Boolean(app.homeStop && app.frequentDestination);
+  const usualRouteStatus = NETWORK_STATUS.find((item) => item.mode === 'train') || NETWORK_STATUS[0];
 
   useEffect(() => {
     if (app.motion === 'off') {
@@ -73,6 +78,13 @@ export default function Home() {
     window.setTimeout(() => router.push('/journey'), 500);
   };
 
+  const quickPlan = (from, to) => {
+    if (!from || !to) return;
+    app.set({ from, to, routeId: 'calm' });
+    haptic();
+    router.push('/journey');
+  };
+
   const readAsk = () => {
     const text = ask.toLowerCase();
     const match = PLACES.find((p) => text.includes(p.toLowerCase().split(' ')[0]));
@@ -88,7 +100,16 @@ export default function Home() {
     <>
       <section className="stack">
         <h1>{app.profileName ? `Where are you going, ${app.profileName}?` : 'Where are you going today?'}</h1>
-        <p className="muted">One app for pods, buses, the maglev and sky shuttles. Pick your two points and Orbital handles the changes.</p>
+        <p className="home-context"><span className="live-mark" aria-hidden="true" /> {usualRouteReady ? `Your usual route (${app.homeStop} → ${app.frequentDestination}) is ${usualRouteStatus.note}.` : `${normalLines} of ${NETWORK_STATUS.length} network lines are running normally.`}</p>
+      </section>
+
+      <section className="quick-actions" aria-labelledby="quick-actions-h">
+        <h2 id="quick-actions-h" className="sr">Quick actions</h2>
+        {usualRouteReady ? <>
+          <button className="chip" onClick={() => quickPlan(app.homeStop, app.frequentDestination)}><TransitIcon name="home" size={17} /> Go to work</button>
+          <button className="chip" onClick={() => quickPlan(app.frequentDestination, app.homeStop)}><TransitIcon name="route" size={17} /> Go home</button>
+          <button className="chip" onClick={() => quickPlan(app.from, app.to)}><TransitIcon name="live" size={17} /> Repeat last trip</button>
+        </> : <a className="chip" href="/settings#profile"><TransitIcon name="comfort" size={17} /> Save your regular trip <span aria-hidden="true">→</span></a>}
       </section>
 
       <section className="card stack" aria-labelledby="plan-h">
@@ -153,6 +174,10 @@ export default function Home() {
             <p className="muted complex">{r.changes} change{r.changes === 1 ? '' : 's'} · {r.walk} m of walking · {r.price}</p>
           </button>
         ))}
+        <section className="card network-health" aria-labelledby="health-h">
+          <div><h3 id="health-h">Network health</h3><p className="muted">{normalLines} of {NETWORK_STATUS.length} lines running normally</p></div>
+          <a className="chip" href="/network">View network <span aria-hidden="true">→</span></a>
+        </section>
       </section>
     </>
   );

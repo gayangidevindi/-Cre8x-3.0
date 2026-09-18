@@ -84,7 +84,7 @@ export default function Settings() {
         </button>
       </section>
 
-      <section className="card stack" aria-labelledby="profile-h">
+      <section className="card stack" id="profile" aria-labelledby="profile-h">
         <h2 id="profile-h">My profile</h2>
         <p className="muted">Personal travel preferences only. Saved only on this device. Nothing is sent anywhere.</p>
         <div className="field"><label htmlFor="profile-name">Name or nickname</label><input id="profile-name" value={profile.name} placeholder="Priya" onChange={(e) => setProfile((p) => ({ ...p, name: e.target.value }))} /></div>
