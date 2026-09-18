@@ -80,7 +80,7 @@ export default function Home() {
       app.set({ to: match });
       setHint(`Set your destination to ${match}. Check the start point, then choose a route.`);
     } else if (text.trim()) {
-      setHint('Type a place name, like "hospital" or "sky hub", and it will fill the box for you.');
+      setHint('Type a place name, like "Pettah" or "Lotus Tower", and it will fill the box for you.');
     }
   };
 
@@ -119,7 +119,7 @@ export default function Home() {
         <p className="muted">Write it the way you would say it. Orbital fills the boxes for you.</p>
         <div className="field">
           <label htmlFor="ask">Tell Orbital your trip</label>
-          <input id="ask" placeholder="Take me to the hospital before 10" value={ask}
+          <input id="ask" placeholder="Take me to Lotus Tower Hub before 10" value={ask}
             onChange={(e) => setAsk(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && readAsk()} />
         </div>
         <button className="btn ghost" onClick={readAsk}>Fill the boxes for me</button>

@@ -7,6 +7,22 @@ import { useLiveClock } from '../../lib/useLiveClock';
 import { haptic } from '../../lib/feedback';
 import Skeleton from '../../components/Skeleton';
 
+const labelLines = (name) => {
+  const words = name.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach((word) => {
+    if (line && `${line} ${word}`.length > 16) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = line ? `${line} ${word}` : word;
+    }
+  });
+  if (line) lines.push(line);
+  return lines;
+};
+
 export default function Track() {
   const app = useApp();
   const route = findRoute(app.routeId);
@@ -142,7 +158,7 @@ export default function Track() {
               return (
                 <g key={s.name} className="map-stop" role="button" tabIndex="0" aria-label={`${s.name}, ${passed ? 'passed' : s.at === discreteStep ? 'you are here' : 'upcoming'}`} onClick={() => setSelectedStop({ ...s, passed, current: s.at === discreteStep })} onKeyDown={(event) => event.key === 'Enter' && setSelectedStop({ ...s, passed, current: s.at === discreteStep })}>
                   <circle cx={sx} cy={sy} r={active ? 16 : 12} fill={passed ? 'var(--teal)' : 'var(--night)'} stroke="var(--ink)" strokeWidth="3" />
-                  <text x={sx < 170 ? sx + 20 : sx - 20} y={sy - 7} textAnchor={sx < 170 ? 'start' : 'end'} fill="var(--ink)" fontSize="15" fontWeight="700"><tspan x={sx < 170 ? sx + 20 : sx - 20} dy="0">{s.name.split(' ')[0]}</tspan><tspan x={sx < 170 ? sx + 20 : sx - 20} dy="18">{s.name.split(' ').slice(1).join(' ')}</tspan></text>
+                  <text x={sx < 170 ? sx + 20 : sx - 20} y={sy - 7} textAnchor={sx < 170 ? 'start' : 'end'} fill="var(--ink)" fontSize="15" fontWeight="700">{labelLines(s.name).map((label, index) => <tspan key={label} x={sx < 170 ? sx + 20 : sx - 20} dy={index === 0 ? '0' : '18'}>{label}</tspan>)}</text>
                 </g>
               );
             })}

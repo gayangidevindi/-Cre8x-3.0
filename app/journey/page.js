@@ -100,8 +100,8 @@ export default function Journey() {
 
       {route.status === 'warn' && (
         <section className="card stack" style={{ borderColor: 'var(--coral)' }} role="alert">
-          <div className="row"><TransitIcon name="alert" size={24} /><h2>Your sky shuttle is 6 minutes late</h2></div>
-          <p>You would miss the pod at Skyport North. Orbital has held a later pod for you, at no extra cost.</p>
+          <div className="row"><TransitIcon name="alert" size={24} /><h2>Katunayake Shuttle is 6 minutes late</h2></div>
+          <p>You would miss the pod at Katunayake Skyport. Orbital has held a later pod for you, at no extra cost.</p>
           {rebooking ? <div className="rebook-status" role="status"><span>Reassigning your pod</span><span className="progress"><i /></span></div>
             : rebooked
             ? <p className="badge ok" style={{ padding: 12 }}>Pod held until 09:33. Nothing else to do.</p>

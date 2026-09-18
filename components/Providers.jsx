@@ -4,9 +4,22 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
 
+const PLACE_MIGRATIONS = {
+  'Harbour Terrace': 'Colombo Port City Terminal',
+  'Skyport North': 'Katunayake Skyport',
+  'Meridian Hospital': 'National Hospital Interchange',
+  'Meridian Interchange': 'National Hospital Interchange',
+  'Old Town Plaza': 'Pettah Central',
+  'Lagoon Gardens': 'Bolgoda Lagoon Gardens',
+  'Cloudline Tower': 'Lotus Tower Hub',
+  'University Ring': 'Moratuwa University Ring'
+};
+
+const migratePlaces = (value) => PLACE_MIGRATIONS[value] || value;
+
 const DEFAULTS = {
   scale: 1, contrast: 'normal', motion: 'on', simple: 'off', density: 'normal', speak: false,
-  from: 'Harbour Terrace', to: 'Ratmalana Sky Hub', routeId: 'calm', when: 'now', journeyStarted: false,
+  from: 'Colombo Port City Terminal', to: 'Ratmalana Sky Hub', routeId: 'calm', when: 'now', journeyStarted: false,
   progress: 0, arrived: false, weakSignal: false, profileName: '', homeStop: '', frequentDestination: '',
   usesMobilitySupport: false, travelsWithAssistant: false
 };
@@ -21,8 +34,14 @@ export default function Providers({ children }) {
       const journey = localStorage.getItem('orbital.journey') || localStorage.getItem('oracle.journey');
       const profile = localStorage.getItem('orbital.profile');
       if (prefs) setState((s) => ({ ...s, ...JSON.parse(prefs) }));
-      if (journey) setState((s) => ({ ...s, ...JSON.parse(journey) }));
-      if (profile) setState((s) => ({ ...s, ...JSON.parse(profile) }));
+      if (journey) {
+        const savedJourney = JSON.parse(journey);
+        setState((s) => ({ ...s, ...savedJourney, from: migratePlaces(savedJourney.from), to: migratePlaces(savedJourney.to) }));
+      }
+      if (profile) {
+        const savedProfile = JSON.parse(profile);
+        setState((s) => ({ ...s, ...savedProfile, homeStop: migratePlaces(savedProfile.homeStop), frequentDestination: migratePlaces(savedProfile.frequentDestination) }));
+      }
     } catch (e) {}
     setReady(true);
   }, []);

@@ -15,7 +15,7 @@ A single mobile-first app for planning, following and finishing a journey across
 - "Simple mode" removes secondary content from every screen, not a toggle that only changes colours.
 - Every map has an equivalent list view; every live update is announced via `aria-live` and optional speech.
 - High-contrast theme replaces the palette, not just the text colour.
-- Microcopy is plain language: "Stay on until Lagoon Gardens", not "Alight at interchange 2".
+- Microcopy is plain language: "Stay on until Bolgoda Lagoon Gardens", not "Alight at interchange 2".
 - Color statuses pair their colour with a check or alert icon.
 - Keyboard-only flow: press Tab from the skip link, enter the two places, Tab to **Find my routes**, then Tab through the Copilot, route explanation, alternatives, and **Start this journey**. On the Live screen, Tab reaches map/list, screen explanation, and **I have arrived**; focus remains visible throughout.
 - Copilot understands requests such as "I am running late", "avoid crowds", and "keep it step-free" on-device.
