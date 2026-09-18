@@ -100,4 +100,23 @@ input::placeholder{color:var(--ink-dim);opacity:.8}
 [data-motion="off"] .ticker{height:auto;min-height:58px;padding:7px 0 44px}.ticker:hover .ticker-track,.ticker:focus-within .ticker-track{animation-play-state:paused}[data-motion="off"] .ticker-track{animation:none;width:100%;min-width:0;display:flex;flex-wrap:wrap;white-space:normal;gap:7px;padding:0 10px}[data-motion="off"] .ticker-set{display:contents}[data-motion="off"] .ticker-set:nth-child(2){display:none}[data-motion="off"] .ticker-item{flex:0 1 auto;min-width:0;min-height:36px;padding:0 10px}[data-motion="off"] .ticker-meta{top:auto;right:0;height:38px;background:var(--night);padding:0 12px}
 [data-motion="off"] .skeleton-bar{animation:none;background:var(--surface-2)}
 [data-motion="off"] .saved-trip{opacity:1;transform:none;animation:none}.suggestion{transition:background .1s ease,transform .1s ease}
-@media (min-width:560px){.main{padding:16px 22px 120px}}
+@media (min-width:600px){
+  .shell{max-width:680px}
+  .main{padding:20px 28px 120px}
+}
+
+@media (min-width:1024px){
+  body{min-width:1024px}
+  .shell{max-width:none;width:100%;min-height:100dvh;margin:0;padding-left:236px;overflow:visible}
+  .bar{padding:16px 32px}
+  .ticker{width:100%}
+  .main{width:min(100%,860px);margin:0 auto;padding:28px 34px 56px;gap:22px}
+  .nav{position:fixed;inset:0 auto 0 0;width:236px;max-width:none;margin:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:8px;padding:24px 16px;background:rgba(10,10,10,.98);border:0;border-right:1px solid var(--line);backdrop-filter:blur(18px)}
+  .nav::before{content:'Orbital 2100';display:block;padding:8px 14px 28px;color:var(--ink);font-family:Sora,sans-serif;font-weight:700;font-size:var(--fs-3);letter-spacing:-.02em}
+  .nav a{min-height:58px;flex-direction:row;justify-content:flex-start;padding:0 16px;border-radius:12px;font-size:var(--fs-2);gap:12px}
+  .nav a[aria-current="page"]{box-shadow:inset 3px 0 0 var(--gold);background:rgba(255,122,0,.1)}
+  .brand{margin-right:auto}
+  .bar .chip{width:auto}
+  .ticker-meta{padding-right:32px}
+  .live-map{width:min(100%,600px);margin-inline:auto;min-height:520px}
+}
