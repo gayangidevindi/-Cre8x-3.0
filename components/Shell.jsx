@@ -12,7 +12,7 @@ const TABS = [
   { href: '/', label: 'Plan', icon: 'plan' },
   { href: '/journey', label: 'Route', icon: 'route' },
   { href: '/track', label: 'Live', icon: 'live' },
-  { href: '/settings', label: 'Comfort', icon: 'comfort' }
+  { href: '/settings', label: 'Accessibility', icon: 'comfort' }
 ];
 
 export default function Shell({ children }) {
@@ -21,7 +21,6 @@ export default function Shell({ children }) {
   const app = useApp();
   const [open, setOpen] = useState(false);
   const updated = useLiveClock();
-
   const bigger = () => app.set({ scale: Math.min(1.6, +(app.scale + 0.15).toFixed(2)) });
   const smaller = () => app.set({ scale: Math.max(1, +(app.scale - 0.15).toFixed(2)) });
   const explainScreen = () => {
@@ -46,7 +45,7 @@ export default function Shell({ children }) {
       <header className="bar">
         <Link href="/" className="brand"><span className="dot" aria-hidden="true"><TransitIcon name="orbital" size={19} /></span>Orbital <span className="brand-year">2100</span></Link>
         <button className="chip" onClick={() => setOpen(true)} aria-haspopup="dialog">
-          <span aria-hidden="true">Aa</span> Comfort
+          <span aria-hidden="true">Aa</span> Accessibility
         </button>
       </header>
 
@@ -63,7 +62,7 @@ export default function Shell({ children }) {
       {open && (
         <>
           <div className="backdrop" onClick={() => setOpen(false)} />
-          <div className="sheet" role="dialog" aria-label="Comfort controls">
+              <div className="sheet" role="dialog" aria-label="Accessibility settings">
             <div className="between" style={{ marginBottom: 14 }}>
               <h2>Make this easier</h2>
               <button className="chip" onClick={() => setOpen(false)}>Done</button>

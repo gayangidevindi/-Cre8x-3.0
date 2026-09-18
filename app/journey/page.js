@@ -8,6 +8,9 @@ import Skeleton from '../../components/Skeleton';
 import { useLiveClock } from '../../lib/useLiveClock';
 import { haptic } from '../../lib/feedback';
 
+const isStepFree = (route) => route.legs.every((leg) => /step-free|level boarding|lift|ramp/i.test(leg.access));
+const hasSeating = (route) => route.seats !== 'Standing likely';
+
 export default function Journey() {
   const app = useApp();
   const router = useRouter();
@@ -20,21 +23,30 @@ export default function Journey() {
   const [loading, setLoading] = useState(true);
   const updated = useLiveClock(`${app.routeId}-${rebooked}`);
 
+  const rankRoutes = (value) => {
+    const text = value.toLowerCase();
+    return [...ROUTES].sort((a, b) => {
+      const score = (route) => (text.includes('late') ? (route.status === 'ok' ? 4 : -3) : 0)
+        + (text.includes('crowd') || text.includes('quiet') ? (route.crowd === 'Quiet' ? 5 : -3) : 0)
+        + (text.includes('step') || text.includes('wheel') ? (route.id === 'flat' ? 6 : 0) : 0)
+        + (app.usesMobilitySupport && isStepFree(route) ? 10 : 0)
+        + (app.travelsWithAssistant && hasSeating(route) ? 5 : 0);
+      return score(b) - score(a);
+    });
+  };
+
   useEffect(() => {
     setLoading(true);
     const timer = window.setTimeout(() => setLoading(false), 700);
     return () => window.clearTimeout(timer);
   }, [app.routeId]);
 
+  useEffect(() => { setRanked(rankRoutes(copilot)); }, [app.usesMobilitySupport, app.travelsWithAssistant]);
+
   const askCopilot = (value) => {
     setCopilot(value);
     const text = value.toLowerCase();
-    const ordered = [...ROUTES].sort((a, b) => {
-      const score = (r) => (text.includes('late') ? (r.status === 'ok' ? 4 : -3) : 0)
-        + (text.includes('crowd') || text.includes('quiet') ? (r.crowd === 'Quiet' ? 5 : -3) : 0)
-        + (text.includes('step') || text.includes('wheel') ? (r.id === 'flat' ? 6 : 0) : 0);
-      return score(b) - score(a);
-    });
+    const ordered = rankRoutes(value);
     setRanked(ordered);
     if (value.trim()) app.set({ routeId: ordered[0].id });
   };
@@ -68,6 +80,7 @@ export default function Journey() {
         <p>{route.plain}</p>
         <div className="row" style={{ flexWrap: 'wrap' }}>
           <span className={`badge ${route.status === 'warn' ? 'warn' : 'ok'}`}><TransitIcon name={route.status === 'warn' ? 'alert' : 'check'} size={14} /> {route.statusText}</span><span className="muted">{updated}</span>
+          {((app.usesMobilitySupport && isStepFree(route)) || (app.travelsWithAssistant && hasSeating(route))) && <span className="badge ok"><TransitIcon name="check" size={14} /> Shown first because of your profile</span>}
           <span className="badge complex">{route.crowd}</span>
           <span className="badge complex">{route.seats}</span>
           <span className="badge complex">{route.price}</span>
@@ -131,6 +144,7 @@ export default function Journey() {
             <span className="stack" style={{ gap: 4 }}>
               <h3>{r.name}</h3>
               <span className="muted">{r.plain}</span>
+              {((app.usesMobilitySupport && isStepFree(r)) || (app.travelsWithAssistant && hasSeating(r))) && <span className="badge ok"><TransitIcon name="check" size={14} /> Shown first because of your profile</span>}
               <span className="muted">{expanded === r.id ? `${r.legs.length} legs. ${r.legs.map((leg) => `${modeOf(leg.mode).label} to ${leg.to}`).join(', ')}.` : 'Select to see full route details.'}</span>
             </span>
             <span className="badge">{r.minutes} min</span>

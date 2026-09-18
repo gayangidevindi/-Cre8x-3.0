@@ -1,11 +1,29 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../../components/Providers';
+import { PLACES } from '../../lib/data';
 
 export default function Settings() {
   const app = useApp();
   const pct = Math.round(app.scale * 100);
-  const [support, setSupport] = useState('');
+  const [profile, setProfile] = useState({ name: '', home: '', destination: '', mobility: false, assistant: false });
+  const [profileMessage, setProfileMessage] = useState('');
+
+  useEffect(() => {
+    if (!app.ready) return;
+    setProfile({ name: app.profileName, home: app.homeStop, destination: app.frequentDestination, mobility: app.usesMobilitySupport, assistant: app.travelsWithAssistant });
+  }, [app.ready]);
+
+  const saveProfile = () => {
+    app.set({ profileName: profile.name.trim(), homeStop: profile.home, frequentDestination: profile.destination, usesMobilitySupport: profile.mobility, travelsWithAssistant: profile.assistant });
+    setProfileMessage('Profile saved');
+  };
+
+  const clearProfile = () => {
+    app.clearProfile();
+    setProfile({ name: '', home: '', destination: '', mobility: false, assistant: false });
+    setProfileMessage('Profile cleared');
+  };
 
   return (
     <>
@@ -66,13 +84,18 @@ export default function Settings() {
         </button>
       </section>
 
-      <section className="card stack">
-        <h2>Travelling with support</h2>
-        <p className="muted">Orbital uses this to pick routes, not to show badges. Step-free routes come up first when this is on.</p>
-        <button className="chip" aria-pressed={support === 'mobility'} onClick={() => setSupport(support === 'mobility' ? '' : 'mobility')}>I use a wheelchair or walker</button>
-        <button className="chip" aria-pressed={support === 'assistant'} onClick={() => setSupport(support === 'assistant' ? '' : 'assistant')}>I travel with an assistant</button>
-        <button className="chip" aria-pressed={support === 'helper'} onClick={() => setSupport(support === 'helper' ? '' : 'helper')}>Tell a helper to meet me</button>
-        {support && <p className="badge ok" role="status">Support preference selected for this session.</p>}
+      <section className="card stack" aria-labelledby="profile-h">
+        <h2 id="profile-h">My profile</h2>
+        <p className="muted">Personal travel preferences only. Saved only on this device. Nothing is sent anywhere.</p>
+        <div className="field"><label htmlFor="profile-name">Name or nickname</label><input id="profile-name" value={profile.name} placeholder="Priya" onChange={(e) => setProfile((p) => ({ ...p, name: e.target.value }))} /></div>
+        <div className="field"><label htmlFor="profile-home">Home stop</label><input id="profile-home" list="profile-places" value={profile.home} placeholder="Choose a home stop" onChange={(e) => setProfile((p) => ({ ...p, home: e.target.value }))} /></div>
+        <div className="field"><label htmlFor="profile-destination">Work or frequent destination</label><input id="profile-destination" list="profile-places" value={profile.destination} placeholder="Choose a frequent destination" onChange={(e) => setProfile((p) => ({ ...p, destination: e.target.value }))} /></div>
+        <datalist id="profile-places">{PLACES.map((place) => <option key={place} value={place} />)}</datalist>
+        <button className="chip" aria-pressed={profile.mobility} onClick={() => setProfile((p) => ({ ...p, mobility: !p.mobility }))}>I use a wheelchair or walker</button>
+        <button className="chip" aria-pressed={profile.assistant} onClick={() => setProfile((p) => ({ ...p, assistant: !p.assistant }))}>I travel with an assistant</button>
+        <button className="btn primary" onClick={saveProfile}>Save my profile</button>
+        <button className="btn ghost" onClick={clearProfile}>Clear my profile</button>
+        {profileMessage && <p className="badge ok" role="status">{profileMessage}</p>}
       </section>
     </>
   );
