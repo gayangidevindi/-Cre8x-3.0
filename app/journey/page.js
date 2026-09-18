@@ -76,12 +76,12 @@ export default function Journey() {
 
       <section className="card stack reveal reveal-2" aria-labelledby="copilot-h">
         <div className="between">
-          <div className="row"><TransitIcon name="sparkle" size={22} /><h2 id="copilot-h">AI Copilot</h2></div>
-          <span className="badge ok"><TransitIcon name="check" size={14} /> on device</span>
+          <div className="row"><TransitIcon name="route" size={22} /><h2 id="copilot-h">Tell Orbital what matters</h2></div>
+          <span className="badge ok"><TransitIcon name="check" size={14} /> instant</span>
         </div>
         <p className="muted">Describe what changed. I will reorder these three routes.</p>
-        <input value={copilot} onChange={(e) => askCopilot(e.target.value)} aria-label="Tell AI Copilot what you need"
-          placeholder="I am running late or avoid crowds" />
+        <input value={copilot} onChange={(e) => askCopilot(e.target.value)} aria-label="Tell Orbital what matters for your route"
+          placeholder="I'm running late or avoid crowds" />
         <p className="copilot-note" role="status"><TransitIcon name="info" size={16} /> {explanation}</p>
       </section>
 

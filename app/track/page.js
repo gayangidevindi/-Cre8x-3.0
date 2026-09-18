@@ -15,6 +15,7 @@ export default function Track() {
   const [view, setView] = useState('map');
   const [mapLoading, setMapLoading] = useState(true);
   const [signalDismissed, setSignalDismissed] = useState(false);
+  const [selectedStop, setSelectedStop] = useState(null);
   const spoken = useRef(-1);
   const signalActive = app.weakSignal;
   const updated = useLiveClock(signalActive ? 'weak' : 'live');
@@ -124,28 +125,34 @@ export default function Track() {
       {view === 'map' ? (
         <section className="card" aria-labelledby="map-h">
           <h2 id="map-h" className="sr">Map of your journey</h2>
-          <svg viewBox="0 0 320 380" width="100%" height="auto" role="img"
+          <svg className="live-map" viewBox="0 0 360 480" width="100%" role="img"
             aria-label={`Map. You are between ${current.name} and ${next.name}.`}>
-            <rect width="320" height="380" rx="14" fill="var(--surface-2)" />
-            {[60, 140, 220, 300].map((g) => (
-              <line key={g} x1="0" y1={g} x2="320" y2={g} stroke="var(--line)" strokeWidth="1" />
+            <rect width="360" height="480" rx="18" fill="var(--surface-2)" />
+            <path d="M0 80h360M0 160h360M0 240h360M0 320h360M0 400h360M72 0v480M144 0v480M216 0v480M288 0v480" stroke="var(--line)" strokeWidth="1" opacity=".55" />
+            {[70, 150, 230, 310, 390].map((g) => (
+              <line key={g} x1="0" y1={g} x2="360" y2={g} stroke="var(--line)" strokeWidth="1" opacity=".5" />
             ))}
-            <polyline points={line} fill="none" stroke="var(--line)" strokeWidth="10" strokeLinecap="round" />
-            <polyline points={done} fill="none" stroke="var(--teal)" strokeWidth="10" strokeLinecap="round" />
+            <polyline points={line} fill="none" stroke="var(--ink)" strokeWidth="14" strokeLinecap="round" opacity=".18" />
+            <polyline points={line} fill="none" stroke="var(--ink)" strokeWidth="6" strokeLinecap="round" />
+            <polyline points={done} fill="none" stroke="var(--teal)" strokeWidth="9" strokeLinecap="round" />
             {STOPS.map((s) => {
               const [sx, sy] = MAP_PATH[s.at];
+              const passed = s.at < discreteStep;
+              const active = selectedStop?.name === s.name;
               return (
-                <g key={s.name}>
-                  <circle cx={sx} cy={sy} r="9" fill="var(--night)" stroke="var(--ink)" strokeWidth="3" />
-                  <text x={sx + 16} y={sy + 5} fill="var(--ink)" fontSize="13">{s.name}</text>
+                <g key={s.name} className="map-stop" role="button" tabIndex="0" aria-label={`${s.name}, ${passed ? 'passed' : s.at === discreteStep ? 'you are here' : 'upcoming'}`} onClick={() => setSelectedStop({ ...s, passed, current: s.at === discreteStep })} onKeyDown={(event) => event.key === 'Enter' && setSelectedStop({ ...s, passed, current: s.at === discreteStep })}>
+                  <circle cx={sx} cy={sy} r={active ? 16 : 12} fill={passed ? 'var(--teal)' : 'var(--night)'} stroke="var(--ink)" strokeWidth="3" />
+                  <text x={sx < 170 ? sx + 20 : sx - 20} y={sy - 7} textAnchor={sx < 170 ? 'start' : 'end'} fill="var(--ink)" fontSize="15" fontWeight="700"><tspan x={sx < 170 ? sx + 20 : sx - 20} dy="0">{s.name.split(' ')[0]}</tspan><tspan x={sx < 170 ? sx + 20 : sx - 20} dy="18">{s.name.split(' ').slice(1).join(' ')}</tspan></text>
                 </g>
               );
             })}
             <circle className="pulse" cx={x} cy={y} r="22" fill="var(--gold)" opacity=".3" />
             <circle cx={x} cy={y} r="12" fill="var(--gold)" stroke="var(--night)" strokeWidth="3" />
-            <text x={x - 34} y={y - 24} fill="var(--gold)" fontSize="14" fontWeight="700">You</text>
+            <text x={x - 34} y={y - 28} fill="var(--gold)" fontSize="16" fontWeight="700">You</text>
           </svg>
-          <p className="muted" style={{ marginTop: 10 }}>The gold dot is you. The green line is the part you have already travelled.</p>
+          <div className="map-legend" aria-label="Map legend"><span><i className="legend-you" /> You</span><span><i className="legend-route" /> Route</span><span><i className="legend-upcoming" /> Upcoming</span><span><i className="legend-passed" /> Passed</span></div>
+          {selectedStop && <div className="map-callout" role="status"><strong>{selectedStop.name}</strong><span>{selectedStop.current ? 'You are here' : selectedStop.passed ? 'Passed' : 'Upcoming stop'}</span><button className="chip" onClick={() => setSelectedStop(null)}>Close</button></div>}
+          <p className="muted" style={{ marginTop: 10 }}>Orange dot is you. White line is the route. Tap a stop for its status.</p>
         </section>
       ) : (
         <section className="card stack" aria-labelledby="list-h">
