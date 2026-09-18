@@ -43,7 +43,7 @@ export default function Shell({ children }) {
   return (
     <div className="shell">
       <header className="bar">
-        <Link href="/" className="brand"><span className="dot" aria-hidden="true"><TransitIcon name="orbital" size={19} /></span>Orbital <span className="brand-year">2100</span></Link>
+        <Link href="/" className="brand"><img className="brand-logo" src="/logo.svg" alt="" width="32" height="32" />Orbital <span className="brand-year">2100</span></Link>
         <button className="chip" onClick={() => setOpen(true)} aria-haspopup="dialog">
           <span aria-hidden="true">Aa</span> Accessibility
         </button>
